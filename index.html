@@ -297,6 +297,16 @@
     </div>
   </div>
 
+<
+
+function populateScenes(type) {
+  const sel = document.getElementById("sceneSelect");
+  sel.innerHTML = '<option value="">（隨機）</option>';
+  (sceneOptions[type] || []).forEach((s) => {
+    sel.innerHTML += `<option value="${s.value}">${s.label}</option>`;
+  });
+}
+
 <script>
 /* ====== 資料 ====== */
 
@@ -345,12 +355,12 @@ const trapOptions = {
       label: "底部有粗木樁的深坑"
     },
     {
-      value: "a fake ground that suddenly collapses into a hidden hole",
-      label: "會塌陷的假地板深洞"
+      value: "a fake ground that slowly sinks when weight is applied",
+      label: "踩上去時會慢慢下沉的假地板"
     },
     {
-      value: "a hanging meat lure above a dangerous pit",
-      label: "吊在危險深坑上方的肉誘餌"
+      value: "a hanging meat lure above a quiet pit",
+      label: "吊在安靜深坑上方的肉誘餌"
     },
     {
       value: "a rotating log trap lined with blunt wooden stakes",
@@ -361,8 +371,8 @@ const trapOptions = {
       label: "綁在空心樹樁上方的肉誘餌"
     },
     {
-      value: "a wobbling wooden platform placed over a pit",
-      label: "架在坑上方會晃動的木板陷阱"
+      value: "a wobbling wooden platform placed gently over a pit",
+      label: "平放在坑上方、會輕微晃動的木板"
     }
   ],
   pet: [
@@ -372,7 +382,7 @@ const trapOptions = {
     },
     {
       value: "a wobbling cardboard platform with cheese on top",
-      label: "上面放起司、會晃動的紙板平台"
+      label: "上面放起司、會輕微晃動的紙板平台"
     },
     {
       value: "a piece of cheese placed right beside a small wall hole",
@@ -387,10 +397,42 @@ const trapOptions = {
       label: "中央放起司的淺淺玩具陷阱"
     },
     {
-      value: "a piece of cheese tied to a swinging string like a toy",
-      label: "掛在搖晃繩子上的起司"
+      value: "a piece of cheese tied to a gently swinging string like a toy",
+      label: "掛在慢慢搖晃的繩子上的起司"
     }
   ]
+};
+
+/* 爆點選項：改為「很小的真實細節」，沒有快跌倒、快砸下來那種誇張情況 */
+const highlightOptions = {
+  ferocious: {
+    en: [
+      "At one subtle highlight moment, a small creaking sound comes from the trap, and the animal instantly freezes for a second, its ears turning slightly toward the sound.",
+      "A few grains of dirt slowly slide off the edge of the pit, and the animal quietly shifts its weight back just a little, still calmly staring at the bait.",
+      "The hanging meat lure sways only a few centimeters more than before, and the animal gently pulls its head back, blinking once, then continues watching.",
+      "The wooden platform under the animal's paw flexes very slightly downward, making it stop mid-step without slipping or jumping, just carefully testing the ground."
+    ],
+    zh: [
+      "有一個比較關鍵的瞬間，陷阱裡發出很輕微的吱呀聲，牠立刻整個身體靜止一秒鐘，耳朵微微轉向聲音的方向。",
+      "深坑邊緣有幾小撮細沙慢慢滑落，牠只是很自然地把重心往後移一點點，眼睛仍然專注盯著誘餌。",
+      "吊著的肉只多晃了一小段距離，輕輕從牠的鼻子或鬍鬚前方晃過去，牠稍微把頭往後縮一下，眨了一次眼，然後繼續觀察。",
+      "牠踩著的木板非常輕微地下沉一點點，沒有崩塌，牠只是停在原地不再往前，多確認幾秒地面的感覺。"
+    ]
+  },
+  pet: {
+    en: [
+      "At the small highlight moment, the front edge of the cardboard box lifts just a tiny bit and slowly settles back down, and the animal leans its head back slightly while still watching the cheese.",
+      "The transparent cup makes a soft tapping sound as it wobbles a little, and the animal calmly takes a half-step back, keeping its eyes fixed on the trap.",
+      "The cheese on the string brushes very lightly against the animal's whiskers, making it blink once and pull its head back just a bit in a natural, non-exaggerated way.",
+      "A tiny piece of dust or cardboard falls slowly from the trap, and the animal freezes for a brief moment, then relaxes and moves its nose closer again."
+    ],
+    zh: [
+      "爆點瞬間，紙箱前緣只微微抬起一點點，又慢慢放回原位，牠只是把頭稍微往後仰了一點，眼睛還是盯著起司。",
+      "透明杯輕輕晃動，發出小小的敲擊聲，牠自然地往後退半步，但視線始終沒有離開陷阱。",
+      "掛在繩子上的起司非常輕微地擦過牠的鬍鬚，牠眨了一下眼，把頭稍微往後縮一點，反應真實、不誇張。",
+      "陷阱上有一小片紙屑或灰塵慢慢掉下來，牠愣住一小下，接著放鬆下來，又把鼻子靠近一點繼續聞。"
+    ]
+  }
 };
 
 /* ====== 工具函式 ====== */
@@ -434,7 +476,7 @@ function getSelectedAnimalObj() {
   const sel = document.getElementById("animalSelect");
   const key = sel.value;
   const list = animalOptions[type] || [];
-  if (!list.length) return { en: "", zh: "" };
+  if (!list.length) return { en: "", label: "" };
   if (!key) return randomFromArray(list);
   return list.find((x) => x.key === key) || randomFromArray(list);
 }
@@ -446,18 +488,16 @@ function ensureValue(selectEl) {
 }
 
 function ensureLabel(selectEl) {
-  // 回傳選項的中文文字（label），如果沒選就隨機挑一個
   if (selectEl.value) {
     const opt = [...selectEl.options].find((o) => o.value === selectEl.value);
     return opt ? opt.textContent : "";
   }
   const validOpts = [...selectEl.options].filter((o) => o.value);
   if (!validOpts.length) return "";
-  const randOpt = randomFromArray(validOpts);
-  return randOpt.textContent;
+  return randomFromArray(validOpts).textContent;
 }
 
-/* ====== 英文 Prompt ====== */
+/* ====== 英文 Prompt（含「小爆點」，明講不要誇張） ====== */
 
 function buildPromptEn() {
   const type = getCurrentAnimalType();
@@ -478,25 +518,29 @@ function buildPromptEn() {
     ? "a dangerous wild predator"
     : "a domestic animal acting brave and curious";
 
+  const hEnArr = highlightOptions[type]?.en || [];
+  const hEn = hEnArr.length ? randomFromArray(hEnArr) : "";
+
   return `
 A 10-second 9:16 hyper-realistic video of ${animal} in ${scene}, carefully trying to grab ${bait} that is part of ${trap}.
-The animal is ${categoryPhrase}, moving slowly and cautiously at first, then suddenly making quick risky moves with its paw to reach the bait without getting caught by the trap.
+The animal is ${categoryPhrase}, moving slowly and cautiously at first, then making small, realistic adjustments with its paw to reach the bait without getting caught by the trap.
+${hEn}
 Camera style: ${camera}. Visual style: ${detail}. Overall mood is ${mood}.
-Natural realtime motion, no slow motion, no time warp.
-The scene focuses on the animal's intelligence, hesitation, and near-miss moments with the trap.
-Designed as a seamless loop, so the final frame can connect perfectly back to the first frame.
+Natural realtime motion, no slow motion, no time warp, no exaggerated reactions, no slapstick.
+The scene focuses on the animal's intelligence, hesitation, and a subtle realistic highlight moment with the trap and the bait.
+Designed as a seamless loop, so the final frame can connect perfectly back to the first frame, ideal for vertical short video.
   `.trim();
 }
 
-/* ====== 中文描述詞（比較保守、不離譜） ====== */
+/* ====== 中文描述詞（「小爆點 · 超寫實版」） ====== */
 
 function buildPromptZh() {
   const type = getCurrentAnimalType();
   const animalObj = getSelectedAnimalObj();
-  const animalZh = animalObj.label; // 老虎 / 家貓...
+  const animalZh = animalObj.label;
 
-  const sceneZh = ensureLabel(document.getElementById("sceneSelect")); // 中文場景
-  const trapZh = ensureLabel(document.getElementById("trapSelect"));   // 中文陷阱
+  const sceneZh = ensureLabel(document.getElementById("sceneSelect"));
+  const trapZh = ensureLabel(document.getElementById("trapSelect"));
 
   const moodOpt = document.getElementById("moodSelect");
   const moodZh = ensureLabel(moodOpt) || "略帶緊張的氛圍";
@@ -507,50 +551,56 @@ function buildPromptZh() {
   const detailOpt = document.getElementById("detailSelect");
   const detailZh = ensureLabel(detailOpt) || "真實的光線與毛髮細節";
 
+  const hZhArr = highlightOptions[type]?.zh || [];
+  const hZh = hZhArr.length ? randomFromArray(hZhArr) : "";
+
   if (type === "ferocious") {
-    // 凶猛動物版本
     return `
 一段 10 秒、9:16 的真實風格影片。
-場景在${sceneZh}，環境自然、畫面${detailZh}。
+場景在${sceneZh}，環境自然，畫面${detailZh}，整體偏寫實紀錄片感。
 
 一隻${animalZh}小心地接近一個陷阱，
 陷阱的設計是：${trapZh}。
-地面有些灰塵與細小雜草，整體看起來接近真實野外環境。
+地面有些細沙與雜草，整體看起來接近真實野外環境。
 
 牠先停下來觀察，耳朵微微抖動，鼻子嗅聞空氣和氣味。
 接著伸出一隻前腳，試探性地輕輕碰一下誘餌或陷阱邊緣，
-陷阱只出現非常輕微的晃動，沒有誇張的爆炸或劇烈動作。
+陷阱只出現非常輕微的變化，沒有劇烈晃動、沒有崩塌、沒有誇張效果。
 
-${animalZh}被小小的晃動嚇到，往後退半步，保持戒備姿勢，
-眼神專注地盯著陷阱，身體保持低姿態，隨時準備再次接近。
+${hZh}
 
-鏡頭以${cameraZh}為主，不過度晃動，不做誇張運鏡。
-整體氛圍是${moodZh}，但不血腥、不恐怖，也不誇張。
+${animalZh}的反應是小幅度、真實的：
+可能只是退半小步、稍微縮一下頭、停住一兩秒重新評估，
+不會出現大跳、翻滾或卡通式的誇張表情。
+
+鏡頭以${cameraZh}為主，不過度晃動，不做特效運鏡，
+整體氛圍是${moodZh}，但不血腥、不恐怖、不搞笑，只是帶有一點張力。
 
 最後一秒的畫面構圖和開頭相似，
 方便剪輯成可以首尾相接的循環短片。
     `.trim();
   } else {
-    // 貓狗老鼠版本
     return `
 一段 10 秒、9:16 的真實風格影片。
-場景在${sceneZh}，光線自然，環境接近日常生活空間。
+場景在${sceneZh}，光線自然，環境接近日常生活空間，偏寫實家庭紀錄感。
 
 畫面中擺放著一個簡單的小陷阱：
-例如${trapZh}，看起來像是人類設計的小機關玩具，
+例如${trapZh}，看起來像是人類設計的安全小機關玩具，
 不會造成真實傷害，整體偏向有趣、可愛。
 
 一隻${animalZh}慢慢靠近起司誘餌，
-牠先停在旁邊觀察幾秒，鼻子聞一聞，耳朵微微晃動。
-接著牠用前腳或鼻子輕輕碰一下起司或陷阱邊緣，
-紙箱、杯子或紙板只出現一點點晃動或輕微移動。
+牠先在旁邊停下來觀察幾秒，鼻子聞一聞，耳朵微微晃動。
+接著用前腳或鼻子輕輕碰一下起司或陷阱邊緣，
+紙箱、杯子或紙板只出現一點點晃動或位移，動作很小、不誇張。
 
-${animalZh}有點被嚇到，往後退半步，
-但仍然很好奇，又稍微向前靠近一點點，
-表現出真實、自然的猶豫與好奇心，不做誇張表情或動作。
+${hZh}
+
+${animalZh}的反應也很克制：
+可能只是退半小步、眨一下眼、把頭稍微往後縮一點，
+整體表現是真實的小心與好奇，而不是喜劇或卡通風格。
 
 鏡頭以${cameraZh}為主，${detailZh}，
-整體氛圍自然、溫和、略帶${moodZh}，不誇張、不卡通化。
+整體氛圍自然、溫和，略帶${moodZh}，不誇張、不動漫化。
 
 最後一秒畫面回到和開頭相似的位置，
 方便剪輯成可以首尾相接的循環短片。
