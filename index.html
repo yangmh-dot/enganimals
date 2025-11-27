@@ -140,7 +140,8 @@
   <main>
     <h1>動物陷阱情節 Sora Prompt 產生器（啟動陷阱 + 驚險躲開版）</h1>
     <div class="subtitle">
-      中文介面 · 英文 Prompt / 中文描述詞 / 雙語 · 固定情節：觸碰誘餌 → 陷阱啟動 → 動物驚險躲開 · 前 2 秒自帶強 Hook
+      中文介面 · 英文 Prompt / 中文描述詞 / 雙語 · 固定情節：觸碰誘餌 → 陷阱啟動 → 動物驚險躲開 · 前 2 秒自帶強 Hook  
+      凶猛動物走野外場景，貓狗老鼠走後院 / 庭院，人道訓練裝置 + 寵物零食。
     </div>
 
     <!-- 動物分類 -->
@@ -164,34 +165,20 @@
 
     <!-- 場景與陷阱 -->
     <section class="card">
-      <h2>場景與陷阱 · 依情境切換</h2>
+      <h2>場景與陷阱 · 依動物切換</h2>
       <div class="row">
         <div>
           <label for="sceneSelect">場景</label>
-          <select id="sceneSelect">
-            <option value="dry_forest">乾燥林地，稀疏樹木與土黃色地面</option>
-            <option value="dense_forest">潮濕森林，濃密植被與柔和綠色光線</option>
-            <option value="savanna">開闊草原，金黃色枯草和低矮灌木</option>
-            <option value="bush">叢林邊緣，灌木與泥土地混雜</option>
-          </select>
+          <select id="sceneSelect"></select>
         </div>
         <div>
-          <label for="trapSelect">陷阱類型</label>
-          <select id="trapSelect">
-            <option value="pit_meat">
-              簡單深坑，上方吊著一塊肉當誘餌
-            </option>
-            <option value="pit_branch">
-              深坑邊緣鋪有枯枝與落葉，中央吊著肉
-            </option>
-            <option value="cage_bait">
-              金屬籠子陷阱，入口前吊著肉當誘餌
-            </option>
-            <option value="snare_bait">
-              繩圈陷阱旁放一小塊肉，引導動物靠近
-            </option>
-          </select>
+          <label for="trapSelect">陷阱 / 裝置類型</label>
+          <select id="trapSelect"></select>
         </div>
+      </div>
+      <div class="hint">
+        凶猛動物：森林 / 草原 + 深坑 / 野外陷阱。<br />
+        貓狗老鼠：後院 / 庭院 / 小巷 + 人道型訓練裝置（紙箱、籠子、無傷繩圈）+ 寵物零食或飼料。
       </div>
     </section>
 
@@ -202,18 +189,10 @@
         <div>
           <label for="moodSelect">氛圍（可隨機）</label>
           <select id="moodSelect">
-            <option value="slight_tension">
-              略帶緊張，但整體保持平靜
-            </option>
-            <option value="calm_observation">
-              冷靜、專注觀察，像自然紀錄片
-            </option>
-            <option value="soft_suspense">
-              輕微懸疑、沒有驚嚇特效
-            </option>
-            <option value="neutral_doc">
-              中性、客觀的野外觀察畫面
-            </option>
+            <option value="slight_tension">略帶緊張，但整體保持平靜</option>
+            <option value="calm_observation">冷靜、專注觀察，像自然紀錄片</option>
+            <option value="soft_suspense">輕微懸疑、沒有驚嚇特效</option>
+            <option value="neutral_doc">中性、客觀的野外觀察畫面</option>
           </select>
         </div>
       </div>
@@ -267,7 +246,8 @@
       <textarea id="output" readonly></textarea>
 
       <div class="hint">
-        固定情節：前 2 秒就是陷阱 + 誘餌 + 動物靠近，中段觸碰後啟動陷阱、動物驚險躲開，沒有血腥、沒有搞笑摔倒。
+        固定情節：前 2 秒就是「陷阱 / 裝置 + 誘餌 + 動物靠近」，中段觸碰後啟動，動物驚險躲開；  
+        不描寫血腥與受傷，只強調真實反射動作與緊張感。
       </div>
     </section>
 
@@ -277,7 +257,7 @@
   </main>
 
   <script>
-    // 動物資料：中文名稱 + 對應英文
+    // ---- 資料定義 ----
     const animalsByCategory = {
       predator: [
         { zh: "老虎", en: "tiger" },
@@ -298,6 +278,36 @@
       ]
     };
 
+    const sceneOptionsByCategory = {
+      predator: [
+        { value: "dry_forest", label: "乾燥林地，稀疏樹木與土黃色地面" },
+        { value: "dense_forest", label: "潮濕森林，濃密植被與柔和綠色光線" },
+        { value: "savanna", label: "開闊草原，金黃色枯草和低矮灌木" },
+        { value: "bush", label: "叢林邊緣，灌木與泥土地混雜" }
+      ],
+      pet: [
+        { value: "backyard", label: "簡單後院，有硬實泥地、矮草與圍欄" },
+        { value: "farmyard", label: "農舍院子，硬化泥地與木欄杆" },
+        { value: "alley", label: "房子旁的小巷，有水泥地與垃圾桶" },
+        { value: "garden", label: "小庭院，有灌木、花盆與石板路" }
+      ]
+    };
+
+    const trapOptionsByCategory = {
+      predator: [
+        { value: "pit_meat", label: "簡單深坑，上方吊著一塊肉當誘餌" },
+        { value: "pit_branch", label: "深坑邊緣鋪有枯枝與落葉，中央吊著肉" },
+        { value: "cage_bait", label: "金屬籠子陷阱，入口前吊著肉當誘餌" },
+        { value: "snare_bait", label: "地面繩圈陷阱，旁邊放一小塊肉當誘餌" }
+      ],
+      pet: [
+        { value: "pet_snare", label: "地面上無傷害的繩圈訓練裝置，旁邊放寵物零食" },
+        { value: "pet_cage", label: "人道型籠子裝置，裡面放寵物飼料或零食" },
+        { value: "pet_box", label: "輕量紙箱或塑膠籠，用木棍撐起，下面放寵物零食" }
+      ]
+    };
+
+    // ---- 共用小工具 ----
     function $(id) {
       return document.getElementById(id);
     }
@@ -310,6 +320,11 @@
       return "en";
     }
 
+    function randomIndex(len) {
+      return Math.floor(Math.random() * len);
+    }
+
+    // ---- UI 填入選項 ----
     function populateAnimals() {
       const category = $("animalCategory").value;
       const list = animalsByCategory[category] || [];
@@ -322,54 +337,89 @@
         select.appendChild(opt);
       });
       if (list.length > 0) {
-        select.value = Math.floor(Math.random() * list.length).toString();
+        select.selectedIndex = randomIndex(list.length);
       }
     }
 
-    function randomOption(selectId) {
-      const sel = $(selectId);
-      const len = sel.options.length;
-      if (len === 0) return;
-      const idx = Math.floor(Math.random() * len);
-      sel.selectedIndex = idx;
+    function populateScenesAndTraps() {
+      const category = $("animalCategory").value;
+
+      const sceneSelect = $("sceneSelect");
+      const trapSelect = $("trapSelect");
+
+      const sceneOpts = sceneOptionsByCategory[category] || [];
+      const trapOpts = trapOptionsByCategory[category] || [];
+
+      sceneSelect.innerHTML = "";
+      trapSelect.innerHTML = "";
+
+      sceneOpts.forEach(o => {
+        const opt = document.createElement("option");
+        opt.value = o.value;
+        opt.textContent = o.label;
+        sceneSelect.appendChild(opt);
+      });
+      trapOpts.forEach(o => {
+        const opt = document.createElement("option");
+        opt.value = o.value;
+        opt.textContent = o.label;
+        trapSelect.appendChild(opt);
+      });
+
+      if (sceneOpts.length > 0) sceneSelect.selectedIndex = randomIndex(sceneOpts.length);
+      if (trapOpts.length > 0) trapSelect.selectedIndex = randomIndex(trapOpts.length);
     }
 
-    function buildSceneText(sceneValue) {
-      switch (sceneValue) {
+    // ---- 場景 / 陷阱描述 ----
+    function buildSceneText(value) {
+      switch (value) {
         case "dry_forest":
           return {
-            en: "a simple deep pit trap in a dry woodland area with dusty ground and scattered dry leaves",
-            zhTrap: "乾燥林地上的簡單深坑陷阱，周圍是塵土飛揚的地面與零散枯葉",
-            enSceneOnly: "a dry woodland area with dusty ground and scattered dry leaves",
-            zhSceneOnly: "乾燥林地，地面帶有塵土與零散枯葉"
+            en: "a dry woodland area with dusty ground and scattered dry leaves",
+            zh: "乾燥林地，地面帶有塵土與零散枯葉"
           };
         case "dense_forest":
           return {
-            en: "a simple deep pit trap in a humid forest with dense green vegetation and soft, diffused light",
-            zhTrap: "潮濕森林中的簡單深坑陷阱，周圍是濃密綠色植被與柔和散射光",
-            enSceneOnly: "a humid forest with dense green vegetation and soft, diffused light",
-            zhSceneOnly: "潮濕森林，濃密綠色植被與柔和散射光"
+            en: "a humid forest with dense green vegetation and soft, diffused light",
+            zh: "潮濕森林，濃密綠色植被與柔和散射光"
           };
         case "savanna":
           return {
-            en: "a simple deep pit trap in an open savanna with golden dry grass and low shrubs under a wide sky",
-            zhTrap: "開闊草原中的簡單深坑陷阱，四周是金黃色枯草與低矮灌木，在寬闊天空下",
-            enSceneOnly: "an open savanna with golden dry grass and low shrubs under a wide sky",
-            zhSceneOnly: "開闊草原，金黃色枯草與低矮灌木，在寬闊天空下"
+            en: "an open savanna with golden dry grass and low shrubs under a wide sky",
+            zh: "開闊草原，金黃色枯草與低矮灌木，在寬闊天空下"
           };
         case "bush":
+          return {
+            en: "scrubby bushland at the edge of the wilderness, with mixed dirt and low shrubs",
+            zh: "野外邊緣的灌木叢地帶，泥土地與低矮灌木混雜"
+          };
+        case "backyard":
+          return {
+            en: "a small backyard with packed dirt, short grass and a simple fence",
+            zh: "一個簡單後院，有硬實泥地、矮草與簡單圍欄"
+          };
+        case "farmyard":
+          return {
+            en: "a farmhouse yard with compacted dirt, wooden fences and scattered tools",
+            zh: "農舍院子，硬化泥地、木欄杆與零散農具"
+          };
+        case "alley":
+          return {
+            en: "a narrow alley beside a house, with concrete ground, low walls and a few trash cans",
+            zh: "房子旁狹窄的小巷，有水泥地、矮牆與幾個垃圾桶"
+          };
+        case "garden":
         default:
           return {
-            en: "a simple deep pit trap in scrubby bushland at the edge of the wilderness, with mixed dirt and low shrubs",
-            zhTrap: "野外邊緣灌木叢地帶中的簡單深坑陷阱，泥土地與低矮灌木混雜",
-            enSceneOnly: "scrubby bushland at the edge of the wilderness, with mixed dirt and low shrubs",
-            zhSceneOnly: "野外邊緣的灌木叢地帶，泥土地與低矮灌木混雜"
+            en: "a small garden with bushes, potted plants and stone tiles",
+            zh: "小庭院，有灌木、花盆與石板路"
           };
       }
     }
 
-    function buildTrapOnlyText(trapValue) {
-      switch (trapValue) {
+    function buildTrapText(value) {
+      switch (value) {
+        // 野外用
         case "pit_meat":
           return {
             en: "a simple deep pit trap in the ground, with a piece of raw meat hanging above the center as bait",
@@ -377,8 +427,8 @@
           };
         case "pit_branch":
           return {
-            en: "a deep pit whose rim is loose and covered with dry branches and leaves, with meat hanging over the middle as bait",
-            zh: "一個邊緣鬆散、鋪滿枯枝與落葉的深坑，中央上方吊著肉當誘餌"
+            en: "a deep pit trap whose rim is covered with dry branches and leaves, with meat hanging over the middle as bait",
+            zh: "邊緣鋪滿枯枝與落葉的深坑陷阱，中央上方吊著肉當誘餌"
           };
         case "cage_bait":
           return {
@@ -386,16 +436,33 @@
             zh: "放在地面上的金屬籠子陷阱，入口前吊著一塊肉作為誘餌"
           };
         case "snare_bait":
+          return {
+            en: "a simple snare trap on the ground, with a small piece of meat placed near the loop as bait",
+            zh: "地面上的簡易繩圈陷阱，旁邊放著一小塊肉當誘餌"
+          };
+        // 家養 / 半野外用（人道裝置）
+        case "pet_snare":
+          return {
+            en: "a simple, non-lethal snare-like training device on the ground, with a small piece of pet food placed near the loop as bait",
+            zh: "地面上的簡易、無傷害繩圈訓練裝置，旁邊放著一小塊寵物零食當誘餌"
+          };
+        case "pet_cage":
+          return {
+            en: "a humane cage device placed on the ground, with pet food or kibble inside as bait",
+            zh: "放在地面上的人道型籠子裝置，裡面放有寵物飼料或零食作為誘餌"
+          };
+        case "pet_box":
         default:
           return {
-            en: "a simple snare trap on the ground, with a small piece of meat placed nearby to lure the animal",
-            zh: "地面上的簡易繩圈陷阱，旁邊放著一小塊肉，引導動物靠近"
+            en: "a lightweight cardboard box or plastic crate propped up on a stick, with pet treats placed underneath as bait",
+            zh: "用木棍撐起的輕量紙箱或塑膠籠，底下擺著寵物零食作為誘餌"
           };
       }
     }
 
-    function buildMoodText(moodValue) {
-      switch (moodValue) {
+    // ---- 氛圍 / 鏡頭 / 細節 ----
+    function buildMoodText(value) {
+      switch (value) {
         case "slight_tension":
           return {
             en: "The mood carries a slight tension but remains controlled and quiet.",
@@ -420,8 +487,8 @@
       }
     }
 
-    function buildCameraText(cameraValue) {
-      switch (cameraValue) {
+    function buildCameraText(value) {
+      switch (value) {
         case "handheld_subtle":
           return {
             en: "The 9:16 vertical video is shot with a gently handheld camera, with minimal shake, as if a field wildlife cinematographer is filming on location.",
@@ -446,8 +513,8 @@
       }
     }
 
-    function buildDetailText(detailValue) {
-      switch (detailValue) {
+    function buildDetailText(value) {
+      switch (value) {
         case "fur_light":
           return {
             en: "Natural daylight reveals realistic fur texture, detailed ground and plants, with soft, physically plausible shadows.",
@@ -472,6 +539,7 @@
       }
     }
 
+    // ---- 主產生函式 ----
     function generatePrompt() {
       const category = $("animalCategory").value;
       const animalIdx = parseInt($("animalSelect").value || "0", 10);
@@ -479,39 +547,37 @@
       const animal = animalList[animalIdx] || animalList[0];
 
       const scene = buildSceneText($("sceneSelect").value);
-      const trap = buildTrapOnlyText($("trapSelect").value);
+      const trap = buildTrapText($("trapSelect").value);
       const mood = buildMoodText($("moodSelect").value);
       const camera = buildCameraText($("cameraSelect").value);
       const detail = buildDetailText($("detailSelect").value);
 
-      // 英文：固定為 B 類型（前 2 秒近景 + 觸碰後啟動陷阱 + 驚險躲開）
       const en = [
         `A 10-second, 9:16 realistic wildlife documentary-style video.`,
         ``,
-        `In the first 2 seconds, the video opens with a vertical close-up of ${scene.en}. ${trap.en} is already in frame: the bait gently swings above the dark opening or mechanism, and the rim looks slightly loose or unstable. From the side of the frame, the nose and front paw of a ${animal.en} slowly move into view, only a few centimeters away from the bait, making it immediately clear that one more step could be dangerous.`,
+        `In the first 2 seconds, the video opens with a vertical close-up in ${scene.en}. ${trap.en} is already in frame, clearly visible in the center of the shot. The bait sits right next to the active part of the trap, which looks tense and ready to trigger. Small movements of dust, grass or loose material around it make the setup feel unstable. From the side of the frame, the nose and front paw of a ${animal.en} slowly move into view, only a few centimeters away from the bait, making it immediately clear that one more step could be dangerous.`,
         ``,
-        `From seconds 2 to 6, the camera pulls back to a medium-close shot showing the ${animal.en} standing at the edge of the trap. Its ears and eyes scan the surroundings while its nose tests the air and the scent of the meat. Then it begins to interact with the setup: using its front paw or nose, it makes small, careful movements to touch the hanging bait and the fragile rim of the trap. The movements are cautious and realistic, without exaggerated reactions, with natural shifts of body weight and breathing.`,
+        `From seconds 2 to 6, the camera pulls back to a medium-close shot showing the ${animal.en} at the edge of the trap area. Its ears and eyes scan the surroundings while its nose tests the air and the scent of the food. Then it begins to interact with the setup: using its front paw or nose, it makes small, careful movements to nudge the bait and press on the ground or device near the critical part of the trap. The movements are cautious and realistic, with natural shifts of body weight and breathing.`,
         ``,
-        `From seconds 6 to 8, as the ${animal.en} touches the bait or the unstable edge one more time, the trap mechanism suddenly activates. Part of the rim collapses: chunks of soil, dry branches and small stones break loose and fall into the darkness below, kicking up a bit of dust. With a quick but believable reflex, the ${animal.en} immediately jumps back or steps sharply away from the edge to solid ground, landing firmly. Its muscles tense, and its tail and ears react with a clear startle response, but the motion remains realistic and controlled, not cartoonish or comedic. The ${animal.en} is not injured; it simply avoids the trap at the last moment.`,
+        `From seconds 6 to 8, the tension peaks. As the ${animal.en} puts its weight down one more time, directly on or next to the sensitive part of the trap, the mechanism suddenly activates. The ground, vegetation or loose parts of the device jerk sharply: soil, dry leaves, grass or small objects are pulled inward or drop away, and a quick burst of dust or debris shoots up from the spot. For a brief moment, the ${animal.en}'s paw loses secure footing, but at the same time it instinctively yanks its leg back and drives its body away from the danger. With a fast, explosive yet believable movement, the ${animal.en} jumps or steps sharply back to solid ground, landing firmly. Its muscles tense, and its tail and ears react with a clear, realistic startle, but the motion remains controlled and not cartoonish or comedic. The ${animal.en} is not injured; it narrowly avoids the trap at the last moment.`,
         ``,
-        `From seconds 8 to 10, the camera is slightly wider. The ${animal.en} now stands at a safe distance, staring intently at the collapsed rim and the still-swaying bait above the trap. Its posture and expression convey lingering tension and heightened alertness.`,
+        `From seconds 8 to 10, the camera is slightly wider. The ${animal.en} now stands at a safe distance, breathing a little faster, staring intently at the triggered trap and the bait on the disturbed patch of ground. Its posture and expression convey lingering tension and heightened alertness, as if deciding whether to approach again or stay away.`,
         ``,
-        `${camera.en} ${detail.en} ${mood.en} The focus is on authentic animal behavior, a strong but grounded moment of danger and escape, with no gore, no visible injuries, no slapstick humor and no over-the-top visual effects.`
+        `${camera.en} ${detail.en} ${mood.en} The focus is on authentic animal behavior and a strong but grounded moment of danger and escape, with no gore, no visible injuries, no slapstick humor and no over-the-top visual effects.`
       ].join(" ");
 
-      // 中文：同樣固定為 B 類型
       const zh = [
         `一段 10 秒、9:16 的寫實野外紀錄風格影片。`,
         ``,
-        `前 2 秒，畫面一開始就是垂直近景：${scene.zhTrap}，誘餌已經清楚地出現在畫面中央，在鏡頭裡輕輕晃動，下面黑暗的坑洞或機關開口與鬆散的邊緣一目了然。從畫面側邊，一隻 ${animal.zh} 的鼻子和前腳慢慢伸進畫面，距離誘餌只有幾公分，讓人一開始就看得出「再靠近一點就很危險」。`,
+        `前 2 秒，畫面一開始就是垂直近景：${scene.zh}，${trap.zh} 清楚出現在畫面中央，誘餌就放在陷阱關鍵位置旁邊，看起來隨時可能被觸發，周圍的塵土、草葉或鬆散物輕微晃動，讓整個設置顯得不穩定。從畫面側邊，一隻 ${animal.zh} 的鼻子和前腳慢慢伸進畫面，距離誘餌只有幾公分，一開始就讓人感覺再靠近一點就很危險。`,
         ``,
-        `第 2～6 秒，鏡頭拉到中近景，${animal.zh} 站在陷阱邊緣，耳朵與眼睛掃視周圍，鼻子持續嗅聞空氣和肉的氣味。接著牠開始與整個設置互動：用前腳或鼻子，對吊著的肉和鬆動的陷阱邊緣做小幅度、謹慎的接觸。動作看起來寫實、冷靜，有自然的重心轉移與呼吸律動，不誇張、不做卡通式反應。`,
+        `第 2～6 秒，鏡頭拉到中近景，${animal.zh} 站在陷阱或裝置附近的邊緣，耳朵與眼睛掃視周圍，鼻子持續嗅聞空氣與食物的味道。接著牠開始與整個設置互動：用前腳或鼻子，對誘餌以及陷阱關鍵位置附近的地面或裝置做小幅度、謹慎的推動與踩踏。動作看起來寫實、冷靜，有自然的重心轉移與呼吸律動，不誇張、不做卡通式反應。`,
         ``,
-        `第 6～8 秒，當 ${animal.zh} 再一次碰觸誘餌或不穩的邊緣時，陷阱機關突然啟動：部分坑邊土塊、枯枝與小石頭一起鬆脫，往下墜入黑暗的坑洞，揚起一點灰塵。${animal.zh} 立刻以自然、可信的反射動作往後跳開或迅速後退一步，穩穩落在安全的地面上。牠的肌肉繃緊，尾巴與耳朵出現明顯但不誇張的受驚反應，整體動作保持真實與可控，不搞笑、不滑稽，牠並沒有受傷，而是在最後一刻驚險躲過陷阱。`,
+        `第 6～8 秒來到整段畫面的緊張高點。當 ${animal.zh} 再一次把重心壓在陷阱敏感位置上或旁邊時，機關突然啟動：地面、草叢或裝置鬆散的部分猛然一抽，土塊、枯葉、草葉或小物件一起被往內拉走或往下掉落，同時從觸發點竄起一小陣灰塵與碎屑。${animal.zh} 的前腳在那一瞬間失去穩固支撐，但牠幾乎同一時間本能地猛然收回腿，整個身體爆發式地往後跳開或迅速退到穩固的地面上，雖然動作快速有力，仍然保持寫實而不誇張。牠沒有受傷，只是在最後一刻驚險躲過陷阱。`,
         ``,
-        `第 8～10 秒，鏡頭視角稍微拉遠，${animal.zh} 停在安全距離，用專注而警戒的眼神盯著剛剛塌落的坑邊與仍在晃動的誘餌。牠的姿勢與表情帶著餘悸與高度警戒感。`,
+        `第 8～10 秒，鏡頭視角稍微拉遠，${animal.zh} 停在安全距離，呼吸略快，專注地盯著已經被觸發的裝置與那片被擾動的地面與誘餌。牠的姿勢與表情帶著餘悸與高度警戒感，彷彿在猶豫要不要再靠近。`,
         ``,
-        `${camera.zh} ${detail.zh} ${mood.zh} 畫面重點放在真實的動物行為，以及有明顯但不浮誇的危險與躲避瞬間，不出現血腥畫面與明顯傷勢，也不刻意做搞笑或誇張特效。`
+        `${camera.zh} ${detail.zh} ${mood.zh} 畫面重點放在真實的動物行為，以及有明顯但不浮誇的危險與躲避瞬間，不出現血腥畫面或明顯傷勢，也不刻意做搞笑或誇張特效。`
       ].join(" ");
 
       const lang = getSelectedLang();
@@ -526,6 +592,7 @@
       $("output").value = out;
     }
 
+    // ---- 其他操作 ----
     function copyOutput() {
       const text = $("output").value;
       if (!text) return;
@@ -536,29 +603,43 @@
     }
 
     function randomAllAndGenerate() {
-      randomOption("animalCategory");
+      // 隨機類型
+      const catSelect = $("animalCategory");
+      catSelect.selectedIndex = randomIndex(catSelect.options.length);
+
       populateAnimals();
-      randomOption("sceneSelect");
-      randomOption("trapSelect");
-      randomOption("moodSelect");
-      randomOption("cameraSelect");
-      randomOption("detailSelect");
+      populateScenesAndTraps();
+
+      // 其他選項隨機
+      ["moodSelect", "cameraSelect", "detailSelect"].forEach(id => {
+        const sel = $(id);
+        if (sel.options.length > 0) sel.selectedIndex = randomIndex(sel.options.length);
+      });
+
       generatePrompt();
     }
 
-    // 初始化
+    // ---- 初始化 ----
     document.addEventListener("DOMContentLoaded", () => {
       populateAnimals();
+      populateScenesAndTraps();
 
-      $("animalCategory").addEventListener("change", populateAnimals);
+      $("animalCategory").addEventListener("change", () => {
+        populateAnimals();
+        populateScenesAndTraps();
+        generatePrompt();
+      });
+
       $("generateBtn").addEventListener("click", (e) => {
         e.preventDefault();
         generatePrompt();
       });
+
       $("copyBtn").addEventListener("click", (e) => {
         e.preventDefault();
         copyOutput();
       });
+
       $("randomAllBtn").addEventListener("click", (e) => {
         e.preventDefault();
         randomAllAndGenerate();
