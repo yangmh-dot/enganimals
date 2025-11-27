@@ -2,515 +2,571 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <title>動物陷阱情節 Sora Prompt 產生器（寫實穩定版）</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>動物陷阱情節 Sora Prompt 產生器（啟動陷阱 + 驚險躲開版）</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color-scheme: light dark;
     }
     body {
       margin: 0;
       padding: 0;
-      background: #111;
-      color: #f5f5f5;
+      background: #0b1015;
+      color: #e5e7eb;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
     }
-    .container {
-      max-width: 960px;
-      margin: 0 auto;
+    main {
+      width: 100%;
+      max-width: 900px;
       padding: 16px;
+      box-sizing: border-box;
     }
     h1 {
-      font-size: 1.8rem;
-      text-align: center;
-      margin-bottom: 4px;
+      font-size: 1.4rem;
+      margin-bottom: 0.25rem;
     }
     .subtitle {
-      text-align: center;
       font-size: 0.9rem;
-      color: #b0b0b0;
-      margin-bottom: 16px;
+      color: #9ca3af;
+      margin-bottom: 1rem;
     }
     .card {
-      background: #1b1b1b;
-      border-radius: 16px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
-    }
-    .section-title {
-      font-size: 1rem;
-      margin-bottom: 8px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .section-title span {
-      font-size: 0.8rem;
-      color: #888;
-      font-weight: normal;
-    }
-    .row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
+      background: #111827;
+      border-radius: 12px;
+      padding: 14px;
       margin-bottom: 12px;
+      border: 1px solid #1f2937;
     }
-    .field {
-      flex: 1 1 150px;
-      min-width: 130px;
+    .card h2 {
+      font-size: 1rem;
+      margin: 0 0 0.5rem 0;
     }
     label {
+      font-size: 0.88rem;
       display: block;
-      font-size: 0.85rem;
-      margin-bottom: 4px;
-      color: #cccccc;
+      margin: 0.25rem 0 0.15rem;
     }
-    select,
-    button,
-    textarea {
+    select {
       width: 100%;
-      padding: 8px 10px;
-      border-radius: 10px;
-      border: 1px solid #333;
-      background: #101010;
-      color: #f5f5f5;
+      padding: 6px 8px;
+      border-radius: 8px;
+      border: 1px solid #374151;
+      background: #020617;
+      color: #e5e7eb;
       font-size: 0.9rem;
       box-sizing: border-box;
     }
-    select:focus,
-    textarea:focus {
-      outline: 2px solid #3b82f6;
-      outline-offset: 1px;
-      border-color: transparent;
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
     }
-    textarea {
-      min-height: 180px;
-      resize: vertical;
-      line-height: 1.6;
+    .row > div {
+      flex: 1 1 160px;
+    }
+    .hint {
+      font-size: 0.8rem;
+      color: #9ca3af;
+      margin-top: 2px;
     }
     .radio-group {
       display: flex;
-      gap: 10px;
+      gap: 12px;
       flex-wrap: wrap;
+      margin-top: 6px;
     }
-    .radio-pill {
+    .radio-group label {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 6px 10px;
-      background: #101010;
-      border-radius: 999px;
-      border: 1px solid #333;
-      font-size: 0.85rem;
-      cursor: pointer;
-      transition: background 0.15s ease, border-color 0.15s ease;
+      gap: 4px;
+      margin: 0;
     }
-    .radio-pill input {
-      accent-color: #3b82f6;
-    }
-    .radio-pill.active {
-      border-color: #3b82f6;
-      background: #111827;
+    textarea {
+      width: 100%;
+      min-height: 200px;
+      border-radius: 10px;
+      border: 1px solid #4b5563;
+      background: #020617;
+      color: #e5e7eb;
+      padding: 8px;
+      box-sizing: border-box;
+      font-size: 0.9rem;
+      line-height: 1.5;
     }
     .btn-row {
       display: flex;
+      gap: 8px;
       flex-wrap: wrap;
-      gap: 10px;
       margin-top: 8px;
     }
-    .btn {
-      cursor: pointer;
+    button {
       border: none;
       border-radius: 999px;
       padding: 8px 14px;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      background: #10b981;
+      color: #022c22;
       font-weight: 600;
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      gap: 6px;
-      flex: 1 1 120px;
-      white-space: nowrap;
+      gap: 4px;
     }
-    .btn-primary {
-      background: #3b82f6;
-      color: white;
+    button.secondary {
+      background: #1f2937;
+      color: #e5e7eb;
     }
-    .btn-secondary {
-      background: #262626;
-      color: #f5f5f5;
+    button:active {
+      transform: translateY(1px);
     }
-    .btn-outline {
-      background: transparent;
-      border: 1px solid #555;
-      color: #e5e5e5;
+    .footer {
+      font-size: 0.8rem;
+      color: #6b7280;
+      margin-top: 10px;
+      text-align: right;
     }
-    .footer-note {
-      font-size: 0.75rem;
-      color: #777;
-      text-align: center;
-      margin-top: 8px;
+    @media (prefers-color-scheme: light) {
+      body { background: #f3f4f6; color: #111827; }
+      .card { background: #ffffff; border-color: #e5e7eb; }
+      textarea { background: #f9fafb; color: #111827; }
+      button.secondary { background: #e5e7eb; color: #111827; }
     }
   </style>
 </head>
-
 <body>
-  <div class="container">
-    <h1>動物陷阱情節 Sora Prompt 產生器（寫實穩定版）</h1>
+  <main>
+    <h1>動物陷阱情節 Sora Prompt 產生器（啟動陷阱 + 驚險躲開版）</h1>
     <div class="subtitle">
-      中文介面 · 英文 Prompt / 中文描述詞 / 雙語 · 偏現實、不誇大、不特別強調 loop
+      中文介面 · 英文 Prompt / 中文描述詞 / 雙語 · 固定情節：觸碰誘餌 → 陷阱啟動 → 動物驚險躲開 · 前 2 秒自帶強 Hook
     </div>
 
     <!-- 動物分類 -->
-    <div class="card">
-      <div class="section-title">動物分類 <span>先選類型</span></div>
+    <section class="card">
+      <h2>動物分類 · 先選類型</h2>
       <div class="row">
-        <div class="field">
-          <label>動物類型</label>
-          <div class="radio-group" id="animalTypeGroup">
-            <label class="radio-pill active">
-              <input type="radio" name="animalType" value="ferocious" checked />
-              凶猛動物
-            </label>
-            <label class="radio-pill">
-              <input type="radio" name="animalType" value="pet" />
-              貓狗老鼠
-            </label>
-          </div>
+        <div>
+          <label for="animalCategory">動物類型</label>
+          <select id="animalCategory">
+            <option value="predator">凶猛動物（虎、獵豹、狼…）</option>
+            <option value="pet">貓狗老鼠（家養 / 半野外）</option>
+          </select>
         </div>
-        <div class="field">
-          <label>動物（可隨機）</label>
+        <div>
+          <label for="animalSelect">動物（可隨機）</label>
           <select id="animalSelect"></select>
+          <div class="hint">會自動用對應英文，例如「獵豹 cheetah」「老虎 tiger」「家貓 house cat」。</div>
         </div>
       </div>
-    </div>
+    </section>
 
     <!-- 場景與陷阱 -->
-    <div class="card">
-      <div class="section-title">場景與陷阱 <span>依動物自動切換</span></div>
+    <section class="card">
+      <h2>場景與陷阱 · 依情境切換</h2>
       <div class="row">
-        <div class="field">
-          <label>場景</label>
-          <select id="sceneSelect"></select>
+        <div>
+          <label for="sceneSelect">場景</label>
+          <select id="sceneSelect">
+            <option value="dry_forest">乾燥林地，稀疏樹木與土黃色地面</option>
+            <option value="dense_forest">潮濕森林，濃密植被與柔和綠色光線</option>
+            <option value="savanna">開闊草原，金黃色枯草和低矮灌木</option>
+            <option value="bush">叢林邊緣，灌木與泥土地混雜</option>
+          </select>
         </div>
-        <div class="field">
-          <label>陷阱類型</label>
-          <select id="trapSelect"></select>
-        </div>
-        <div class="field">
-          <label>氛圍</label>
-          <select id="moodSelect">
-            <option value="">（隨機）</option>
-            <option value="slightly tense but calm">略帶緊張但平靜</option>
-            <option value="calm and observational">冷靜、專注觀察</option>
-            <option value="natural and realistic documentary tone">自然寫實紀錄片感</option>
-            <option value="soft suspense without exaggeration">輕微懸疑、不誇張</option>
+        <div>
+          <label for="trapSelect">陷阱類型</label>
+          <select id="trapSelect">
+            <option value="pit_meat">
+              簡單深坑，上方吊著一塊肉當誘餌
+            </option>
+            <option value="pit_branch">
+              深坑邊緣鋪有枯枝與落葉，中央吊著肉
+            </option>
+            <option value="cage_bait">
+              金屬籠子陷阱，入口前吊著肉當誘餌
+            </option>
+            <option value="snare_bait">
+              繩圈陷阱旁放一小塊肉，引導動物靠近
+            </option>
           </select>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- 風格 -->
-    <div class="card">
-      <div class="section-title">畫面與鏡頭</div>
+    <!-- 氛圍 -->
+    <section class="card">
+      <h2>氛圍 · 自然紀錄片 + 緊張感</h2>
       <div class="row">
-        <div class="field">
-          <label>鏡頭風格</label>
-          <select id="cameraSelect">
-            <option value="">（隨機）</option>
-            <option value="natural, steady close-up shots">自然穩定的近景鏡頭</option>
-            <option value="gentle handheld motion with minimal shake">輕微手持、晃動很小</option>
-            <option value="smooth tracking shot following the animal">平滑跟拍動物</option>
-            <option value="simple wide shot showing the trap and environment">簡單廣角，清楚看到陷阱與環境</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>畫面細節</label>
-          <select id="detailSelect">
-            <option value="">（隨機）</option>
-            <option value="natural lighting and realistic fur details">自然光線與真實毛髮細節</option>
-            <option value="soft daylight with shallow depth of field">柔和日光與淺景深</option>
-            <option value="realistic environment textures and subtle shadows">真實場景材質與柔和陰影</option>
-            <option value="documentary-like realistic color and contrast">紀錄片風格的真實色調與對比</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>影片格式（描述用）</label>
-          <select disabled>
-            <option>10 秒 · 9:16 · 寫實、不誇張</option>
+        <div>
+          <label for="moodSelect">氛圍（可隨機）</label>
+          <select id="moodSelect">
+            <option value="slight_tension">
+              略帶緊張，但整體保持平靜
+            </option>
+            <option value="calm_observation">
+              冷靜、專注觀察，像自然紀錄片
+            </option>
+            <option value="soft_suspense">
+              輕微懸疑、沒有驚嚇特效
+            </option>
+            <option value="neutral_doc">
+              中性、客觀的野外觀察畫面
+            </option>
           </select>
         </div>
       </div>
-    </div>
+    </section>
+
+    <!-- 畫面與鏡頭 -->
+    <section class="card">
+      <h2>畫面與鏡頭 · 寫實、不浮誇</h2>
+      <div class="row">
+        <div>
+          <label for="cameraSelect">鏡頭風格（可隨機）</label>
+          <select id="cameraSelect">
+            <option value="handheld_subtle">輕微手持，晃動很小，像現場跟拍</option>
+            <option value="stable_close">自然穩定的中近景鏡頭</option>
+            <option value="tracking">平滑跟拍動物的移動</option>
+            <option value="wide_observe">簡單廣角，清楚看到陷阱與環境</option>
+          </select>
+        </div>
+        <div>
+          <label for="detailSelect">畫面細節（可隨機）</label>
+          <select id="detailSelect">
+            <option value="fur_light">自然光線與真實毛髮細節、柔和陰影</option>
+            <option value="soft_daylight">柔和日光與淺景深，背景微微模糊</option>
+            <option value="texture_ground">真實地面與樹皮材質，可見塵土與枯葉</option>
+            <option value="doc_color">紀錄片風格色調與對比，帶自然顆粒感</option>
+          </select>
+        </div>
+      </div>
+      <div class="hint">
+        影片格式（描述用）：10 秒 · 9:16 直式 · 寫實風格，不誇張、不搞笑、不做誇張特效。
+      </div>
+    </section>
 
     <!-- 輸出 -->
-    <div class="card">
-      <div class="section-title">輸出設定</div>
-      <div class="row">
-        <div class="field">
-          <label>輸出語言</label>
-          <select id="langSelect">
-            <option value="en">英文 Prompt</option>
-            <option value="zh">中文描述詞</option>
-            <option value="both">中英雙語</option>
-          </select>
-        </div>
+    <section class="card">
+      <h2>輸出設定</h2>
+      <label>輸出語言</label>
+      <div class="radio-group">
+        <label><input type="radio" name="lang" value="en" checked /> 英文 Prompt</label>
+        <label><input type="radio" name="lang" value="zh" /> 中文描述詞</label>
+        <label><input type="radio" name="lang" value="both" /> 中英雙語</label>
       </div>
 
-      <div class="btn-row">
-        <button class="btn btn-secondary" id="randomBtn">🎲 隨機全部</button>
-        <button class="btn btn-primary" id="generateBtn">⚙️ 產生描述</button>
+      <div class="btn-row" style="margin-top: 10px;">
+        <button id="randomAllBtn">隨機全部</button>
+        <button id="generateBtn" class="secondary">⚙️ 產生描述</button>
+        <button id="copyBtn" class="secondary">📋 一鍵複製</button>
       </div>
 
-      <textarea id="promptOutput" placeholder="按下『產生描述』即可生成"></textarea>
+      <label for="output" style="margin-top: 10px;">輸出結果</label>
+      <textarea id="output" readonly></textarea>
 
-      <div class="btn-row">
-        <button class="btn btn-outline" id="copyBtn">📋 一鍵複製</button>
+      <div class="hint">
+        固定情節：前 2 秒就是陷阱 + 誘餌 + 動物靠近，中段觸碰後啟動陷阱、動物驚險躲開，沒有血腥、沒有搞笑摔倒。
       </div>
+    </section>
+
+    <div class="footer">
+      Made for GitHub Pages · 啟動陷阱 + 驚險躲開版 · by Andy
     </div>
+  </main>
 
-    <div class="footer-note">Made for GitHub Pages · 寫實穩定版（無誇張爆點、無強制 loop）</div>
-  </div>
+  <script>
+    // 動物資料：中文名稱 + 對應英文
+    const animalsByCategory = {
+      predator: [
+        { zh: "老虎", en: "tiger" },
+        { zh: "獵豹", en: "cheetah" },
+        { zh: "獅子", en: "lion" },
+        { zh: "豹", en: "leopard" },
+        { zh: "黑豹", en: "black panther" },
+        { zh: "灰狼", en: "grey wolf" },
+        { zh: "鬣狗", en: "hyena" }
+      ],
+      pet: [
+        { zh: "家貓", en: "house cat" },
+        { zh: "橘貓", en: "orange tabby cat" },
+        { zh: "牧羊犬", en: "sheepdog" },
+        { zh: "黃金獵犬", en: "golden retriever" },
+        { zh: "米克斯狗", en: "mixed-breed dog" },
+        { zh: "白老鼠", en: "white mouse" }
+      ]
+    };
 
-<!-- ============================== -->
-<!-- ========== JAVASCRIPT ========= -->
-<!-- ============================== -->
+    function $(id) {
+      return document.getElementById(id);
+    }
 
-<script>
-/* ===== 資料 ===== */
+    function getSelectedLang() {
+      const radios = document.querySelectorAll('input[name="lang"]');
+      for (const r of radios) {
+        if (r.checked) return r.value;
+      }
+      return "en";
+    }
 
-const animalOptions = {
-  ferocious: [
-    { key: "tiger", label: "老虎", en: "a tiger" },
-    { key: "leopard", label: "花豹", en: "a leopard" },
-    { key: "cheetah", label: "獵豹", en: "a cheetah" },
-    { key: "lion", label: "獅子", en: "a lion" },
-    { key: "snow_leopard", label: "雪豹", en: "a snow leopard" }
-  ],
-  pet: [
-    { key: "house_cat", label: "家貓", en: "a house cat" },
-    { key: "stray_cat", label: "流浪貓", en: "a stray cat" },
-    { key: "small_dog", label: "小型狗狗", en: "a small dog" },
-    { key: "big_dog", label: "中大型狗狗", en: "a large dog" },
-    { key: "mouse", label: "小老鼠", en: "a small mouse" }
-  ]
-};
+    function populateAnimals() {
+      const category = $("animalCategory").value;
+      const list = animalsByCategory[category] || [];
+      const select = $("animalSelect");
+      select.innerHTML = "";
+      list.forEach((item, idx) => {
+        const opt = document.createElement("option");
+        opt.value = idx.toString();
+        opt.textContent = `${item.zh} (${item.en})`;
+        select.appendChild(opt);
+      });
+      if (list.length > 0) {
+        select.value = Math.floor(Math.random() * list.length).toString();
+      }
+    }
 
-const sceneOptions = {
-  ferocious: [
-    { value: "a dense forest", label: "茂密森林" },
-    { value: "a wide savanna plain", label: "寬廣草原" },
-    { value: "an open desert", label: "乾燥沙漠" },
-    { value: "a rocky canyon", label: "岩石峽谷" },
-    { value: "a snowy mountain valley", label: "雪地山谷" },
-    { value: "a dry woodland area", label: "乾燥林地" },
-    { value: "a riverside bush area", label: "河岸叢林帶" }
-  ],
-  pet: [
-    { value: "a bright cozy living room", label: "明亮客廳" },
-    { value: "an apartment balcony", label: "公寓陽台" },
-    { value: "a small backyard garden", label: "後院花園" },
-    { value: "a city park lawn", label: "公園草地" },
-    { value: "a clean kitchen floor", label: "廚房地板" },
-    { value: "a quiet alleyway", label: "巷弄角落" },
-    { value: "a wooden deck patio", label: "木平台庭院" }
-  ]
-};
+    function randomOption(selectId) {
+      const sel = $(selectId);
+      const len = sel.options.length;
+      if (len === 0) return;
+      const idx = Math.floor(Math.random() * len);
+      sel.selectedIndex = idx;
+    }
 
-const trapOptions = {
-  ferocious: [
-    { value: "a simple deep pit with rough wooden stakes", label: "簡單深坑 + 粗木樁" },
-    { value: "a fake ground that slowly sinks when pressed", label: "踩上去會慢慢下沉的假地板" },
-    { value: "a hanging piece of meat above a quiet pit", label: "深坑上方吊著一塊肉" },
-    { value: "a basic rotating log trap with blunt stakes", label: "帶鈍木柱的旋轉原木陷阱" },
-    { value: "meat tied above a hollow tree stump", label: "空心樹樁上方綁著肉" },
-    { value: "a slightly wobbly wooden board over a shallow hole", label: "架在淺坑上、會輕微晃動的木板" }
-  ],
-  pet: [
-    { value: "a small cardboard box with cheese placed under it", label: "紙箱底下放起司的小陷阱" },
-    { value: "a slightly wobbly piece of cardboard with cheese on top", label: "放起司的紙板，踩上去會輕微晃動" },
-    { value: "a piece of cheese placed beside a small wall hole", label: "牆角小洞旁的起司" },
-    { value: "a transparent cup propped up by a stick with cheese inside", label: "透明杯用小棍撐起，裡面有起司" },
-    { value: "a shallow toy-like pit with cheese in the center", label: "淺淺的玩具坑中間放起司" },
-    { value: "a piece of cheese tied to a gently swinging string", label: "綁在輕微晃動繩子上的起司" }
-  ]
-};
+    function buildSceneText(sceneValue) {
+      switch (sceneValue) {
+        case "dry_forest":
+          return {
+            en: "a simple deep pit trap in a dry woodland area with dusty ground and scattered dry leaves",
+            zhTrap: "乾燥林地上的簡單深坑陷阱，周圍是塵土飛揚的地面與零散枯葉",
+            enSceneOnly: "a dry woodland area with dusty ground and scattered dry leaves",
+            zhSceneOnly: "乾燥林地，地面帶有塵土與零散枯葉"
+          };
+        case "dense_forest":
+          return {
+            en: "a simple deep pit trap in a humid forest with dense green vegetation and soft, diffused light",
+            zhTrap: "潮濕森林中的簡單深坑陷阱，周圍是濃密綠色植被與柔和散射光",
+            enSceneOnly: "a humid forest with dense green vegetation and soft, diffused light",
+            zhSceneOnly: "潮濕森林，濃密綠色植被與柔和散射光"
+          };
+        case "savanna":
+          return {
+            en: "a simple deep pit trap in an open savanna with golden dry grass and low shrubs under a wide sky",
+            zhTrap: "開闊草原中的簡單深坑陷阱，四周是金黃色枯草與低矮灌木，在寬闊天空下",
+            enSceneOnly: "an open savanna with golden dry grass and low shrubs under a wide sky",
+            zhSceneOnly: "開闊草原，金黃色枯草與低矮灌木，在寬闊天空下"
+          };
+        case "bush":
+        default:
+          return {
+            en: "a simple deep pit trap in scrubby bushland at the edge of the wilderness, with mixed dirt and low shrubs",
+            zhTrap: "野外邊緣灌木叢地帶中的簡單深坑陷阱，泥土地與低矮灌木混雜",
+            enSceneOnly: "scrubby bushland at the edge of the wilderness, with mixed dirt and low shrubs",
+            zhSceneOnly: "野外邊緣的灌木叢地帶，泥土地與低矮灌木混雜"
+          };
+      }
+    }
 
-/* ===== 工具 ===== */
+    function buildTrapOnlyText(trapValue) {
+      switch (trapValue) {
+        case "pit_meat":
+          return {
+            en: "a simple deep pit trap in the ground, with a piece of raw meat hanging above the center as bait",
+            zh: "地面上挖出的簡單深坑，中央上方吊著一塊生肉當誘餌"
+          };
+        case "pit_branch":
+          return {
+            en: "a deep pit whose rim is loose and covered with dry branches and leaves, with meat hanging over the middle as bait",
+            zh: "一個邊緣鬆散、鋪滿枯枝與落葉的深坑，中央上方吊著肉當誘餌"
+          };
+        case "cage_bait":
+          return {
+            en: "a metal cage trap placed on the ground, with a piece of meat hanging near the entrance as bait",
+            zh: "放在地面上的金屬籠子陷阱，入口前吊著一塊肉作為誘餌"
+          };
+        case "snare_bait":
+        default:
+          return {
+            en: "a simple snare trap on the ground, with a small piece of meat placed nearby to lure the animal",
+            zh: "地面上的簡易繩圈陷阱，旁邊放著一小塊肉，引導動物靠近"
+          };
+      }
+    }
 
-function randomFromArray(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
+    function buildMoodText(moodValue) {
+      switch (moodValue) {
+        case "slight_tension":
+          return {
+            en: "The mood carries a slight tension but remains controlled and quiet.",
+            zh: "氛圍略帶緊張，但整體仍然克制而安靜。"
+          };
+        case "soft_suspense":
+          return {
+            en: "There is gentle suspense without jump scares or exaggerated drama.",
+            zh: "帶有輕微懸疑感，沒有突如其來的驚嚇或誇張戲劇效果。"
+          };
+        case "calm_observation":
+          return {
+            en: "The mood is calm and observational, like a serious wildlife documentary.",
+            zh: "整體氛圍冷靜、專注觀察，就像嚴謹的野生動物紀錄片。"
+          };
+        case "neutral_doc":
+        default:
+          return {
+            en: "The mood is neutral and documentary-like, focusing on real animal behavior.",
+            zh: "氛圍中性、偏紀錄片感，專注呈現真實的動物行為。"
+          };
+      }
+    }
 
-function getType() {
-  return document.querySelector("input[name='animalType']:checked").value;
-}
+    function buildCameraText(cameraValue) {
+      switch (cameraValue) {
+        case "handheld_subtle":
+          return {
+            en: "The 9:16 vertical video is shot with a gently handheld camera, with minimal shake, as if a field wildlife cinematographer is filming on location.",
+            zh: "9:16 直式畫面使用輕微手持的攝影機拍攝，晃動幅度很小，就像野外實地拍攝的紀錄片攝影師。"
+          };
+        case "tracking":
+          return {
+            en: "The camera slowly tracks the animal, keeping both the trap and the animal in frame without fast or flashy movements.",
+            zh: "鏡頭緩慢跟拍動物的移動，讓陷阱與動物同時維持在畫面中，沒有快速或花俏的運鏡。"
+          };
+        case "wide_observe":
+          return {
+            en: "A simple, slightly wide shot clearly shows both the trap and the surrounding environment.",
+            zh: "簡單且略帶廣角的畫面，清楚呈現陷阱與周圍環境。"
+          };
+        case "stable_close":
+        default:
+          return {
+            en: "A stable medium-close shot focuses on the animal and the trap area.",
+            zh: "穩定的中近景鏡頭對準動物與陷阱周圍區域。"
+          };
+      }
+    }
 
-function ensureValue(sel) {
-  if (sel.value) return sel.value;
-  const ops = [...sel.options].filter(o => o.value);
-  return ops.length ? randomFromArray(ops).value : "";
-}
+    function buildDetailText(detailValue) {
+      switch (detailValue) {
+        case "fur_light":
+          return {
+            en: "Natural daylight reveals realistic fur texture, detailed ground and plants, with soft, physically plausible shadows.",
+            zh: "自然日光下可見真實的毛髮紋理、細緻的地面與植物細節，並投下柔和且符合物理的陰影。"
+          };
+        case "soft_daylight":
+          return {
+            en: "Soft daylight with shallow depth of field keeps the background slightly blurred, emphasizing the animal and the bait.",
+            zh: "柔和日光搭配淺景深，背景微微模糊，強調動物與誘餌。"
+          };
+        case "texture_ground":
+          return {
+            en: "The ground, tree bark and surrounding plants have clear textures, with dust, dry leaves and small twigs visible.",
+            zh: "地面、樹皮與周圍植物具有清晰材質，可見塵土、枯葉與細小樹枝。"
+          };
+        case "doc_color":
+        default:
+          return {
+            en: "The color grading is neutral and documentary-style, with high dynamic range and a hint of natural film grain.",
+            zh: "整體色調採用中性紀錄片風格，高動態範圍並帶有一點自然底片顆粒感。"
+          };
+      }
+    }
 
-function ensureLabel(sel) {
-  if (sel.value) {
-    return sel.options[sel.selectedIndex].textContent;
-  }
-  const ops = [...sel.options].filter(o => o.value);
-  return ops.length ? randomFromArray(ops).textContent : "";
-}
+    function generatePrompt() {
+      const category = $("animalCategory").value;
+      const animalIdx = parseInt($("animalSelect").value || "0", 10);
+      const animalList = animalsByCategory[category] || animalsByCategory["predator"];
+      const animal = animalList[animalIdx] || animalList[0];
 
-function getAnimal() {
-  const type = getType();
-  const key = document.getElementById("animalSelect").value;
-  const list = animalOptions[type] || [];
-  if (!list.length) return { en: "", label: "" };
-  if (!key) return randomFromArray(list);
-  return list.find(x => x.key === key) || randomFromArray(list);
-}
+      const scene = buildSceneText($("sceneSelect").value);
+      const trap = buildTrapOnlyText($("trapSelect").value);
+      const mood = buildMoodText($("moodSelect").value);
+      const camera = buildCameraText($("cameraSelect").value);
+      const detail = buildDetailText($("detailSelect").value);
 
-/* ===== 英文 Prompt：正常寫實版 ===== */
+      // 英文：固定為 B 類型（前 2 秒近景 + 觸碰後啟動陷阱 + 驚險躲開）
+      const en = [
+        `A 10-second, 9:16 realistic wildlife documentary-style video.`,
+        ``,
+        `In the first 2 seconds, the video opens with a vertical close-up of ${scene.en}. ${trap.en} is already in frame: the bait gently swings above the dark opening or mechanism, and the rim looks slightly loose or unstable. From the side of the frame, the nose and front paw of a ${animal.en} slowly move into view, only a few centimeters away from the bait, making it immediately clear that one more step could be dangerous.`,
+        ``,
+        `From seconds 2 to 6, the camera pulls back to a medium-close shot showing the ${animal.en} standing at the edge of the trap. Its ears and eyes scan the surroundings while its nose tests the air and the scent of the meat. Then it begins to interact with the setup: using its front paw or nose, it makes small, careful movements to touch the hanging bait and the fragile rim of the trap. The movements are cautious and realistic, without exaggerated reactions, with natural shifts of body weight and breathing.`,
+        ``,
+        `From seconds 6 to 8, as the ${animal.en} touches the bait or the unstable edge one more time, the trap mechanism suddenly activates. Part of the rim collapses: chunks of soil, dry branches and small stones break loose and fall into the darkness below, kicking up a bit of dust. With a quick but believable reflex, the ${animal.en} immediately jumps back or steps sharply away from the edge to solid ground, landing firmly. Its muscles tense, and its tail and ears react with a clear startle response, but the motion remains realistic and controlled, not cartoonish or comedic. The ${animal.en} is not injured; it simply avoids the trap at the last moment.`,
+        ``,
+        `From seconds 8 to 10, the camera is slightly wider. The ${animal.en} now stands at a safe distance, staring intently at the collapsed rim and the still-swaying bait above the trap. Its posture and expression convey lingering tension and heightened alertness.`,
+        ``,
+        `${camera.en} ${detail.en} ${mood.en} The focus is on authentic animal behavior, a strong but grounded moment of danger and escape, with no gore, no visible injuries, no slapstick humor and no over-the-top visual effects.`
+      ].join(" ");
 
-function buildEn() {
-  const type = getType();
-  const ani = getAnimal();
+      // 中文：同樣固定為 B 類型
+      const zh = [
+        `一段 10 秒、9:16 的寫實野外紀錄風格影片。`,
+        ``,
+        `前 2 秒，畫面一開始就是垂直近景：${scene.zhTrap}，誘餌已經清楚地出現在畫面中央，在鏡頭裡輕輕晃動，下面黑暗的坑洞或機關開口與鬆散的邊緣一目了然。從畫面側邊，一隻 ${animal.zh} 的鼻子和前腳慢慢伸進畫面，距離誘餌只有幾公分，讓人一開始就看得出「再靠近一點就很危險」。`,
+        ``,
+        `第 2～6 秒，鏡頭拉到中近景，${animal.zh} 站在陷阱邊緣，耳朵與眼睛掃視周圍，鼻子持續嗅聞空氣和肉的氣味。接著牠開始與整個設置互動：用前腳或鼻子，對吊著的肉和鬆動的陷阱邊緣做小幅度、謹慎的接觸。動作看起來寫實、冷靜，有自然的重心轉移與呼吸律動，不誇張、不做卡通式反應。`,
+        ``,
+        `第 6～8 秒，當 ${animal.zh} 再一次碰觸誘餌或不穩的邊緣時，陷阱機關突然啟動：部分坑邊土塊、枯枝與小石頭一起鬆脫，往下墜入黑暗的坑洞，揚起一點灰塵。${animal.zh} 立刻以自然、可信的反射動作往後跳開或迅速後退一步，穩穩落在安全的地面上。牠的肌肉繃緊，尾巴與耳朵出現明顯但不誇張的受驚反應，整體動作保持真實與可控，不搞笑、不滑稽，牠並沒有受傷，而是在最後一刻驚險躲過陷阱。`,
+        ``,
+        `第 8～10 秒，鏡頭視角稍微拉遠，${animal.zh} 停在安全距離，用專注而警戒的眼神盯著剛剛塌落的坑邊與仍在晃動的誘餌。牠的姿勢與表情帶著餘悸與高度警戒感。`,
+        ``,
+        `${camera.zh} ${detail.zh} ${mood.zh} 畫面重點放在真實的動物行為，以及有明顯但不浮誇的危險與躲避瞬間，不出現血腥畫面與明顯傷勢，也不刻意做搞笑或誇張特效。`
+      ].join(" ");
 
-  const scene = ensureValue(sceneSelect);
-  const trap = ensureValue(trapSelect);
-  const mood = ensureValue(moodSelect);
-  const cam = ensureValue(cameraSelect);
-  const detail = ensureValue(detailSelect);
+      const lang = getSelectedLang();
+      let out = "";
+      if (lang === "en") {
+        out = en;
+      } else if (lang === "zh") {
+        out = zh;
+      } else {
+        out = "【英文 Prompt】\n" + en + "\n\n【中文描述】\n" + zh;
+      }
+      $("output").value = out;
+    }
 
-  const bait = type === "ferocious" ? "a piece of meat" : "a piece of cheese";
-  const style = type === "ferocious"
-    ? "a cautious wild predator"
-    : "a small domestic animal with natural curiosity";
+    function copyOutput() {
+      const text = $("output").value;
+      if (!text) return;
+      navigator.clipboard.writeText(text).then(
+        () => alert("已複製到剪貼簿！"),
+        () => alert("複製失敗，請手動複製。")
+      );
+    }
 
-  return `
-A 10-second 9:16 realistic video of ${ani.en} in ${scene}.
-The animal slowly approaches ${trap}, attracted by ${bait}. It pauses to look, sniffs gently, and makes small, careful movements with its paw or nose to test the area near the bait.
-Its behavior is ${style}, with subtle, natural reactions and no exaggerated or cartoon-like motions.
-Camera style: ${cam}. Visual detail: ${detail}. Overall mood: ${mood}.
-Shot in realtime with normal speed and simple, natural movement.
-  `.trim();
-}
+    function randomAllAndGenerate() {
+      randomOption("animalCategory");
+      populateAnimals();
+      randomOption("sceneSelect");
+      randomOption("trapSelect");
+      randomOption("moodSelect");
+      randomOption("cameraSelect");
+      randomOption("detailSelect");
+      generatePrompt();
+    }
 
-/* ===== 中文描述詞：正常寫實版 ===== */
+    // 初始化
+    document.addEventListener("DOMContentLoaded", () => {
+      populateAnimals();
 
-function buildZh() {
-  const type = getType();
-  const ani = getAnimal();
+      $("animalCategory").addEventListener("change", populateAnimals);
+      $("generateBtn").addEventListener("click", (e) => {
+        e.preventDefault();
+        generatePrompt();
+      });
+      $("copyBtn").addEventListener("click", (e) => {
+        e.preventDefault();
+        copyOutput();
+      });
+      $("randomAllBtn").addEventListener("click", (e) => {
+        e.preventDefault();
+        randomAllAndGenerate();
+      });
 
-  const scene = ensureLabel(sceneSelect);
-  const trap = ensureLabel(trapSelect);
-  const mood = ensureLabel(moodSelect) || "自然、稍微緊張的氛圍";
-  const cam = ensureLabel(cameraSelect) || "穩定、自然的鏡頭運動";
-  const detail = ensureLabel(detailSelect) || "真實光線與毛髮細節";
-
-  if (type === "ferocious") {
-    return `
-一段 10 秒、9:16 的寫實風格影片。
-場景在${scene}，畫面呈現${detail}，整體氛圍偏向自然紀錄片。
-
-一隻${ani.label}慢慢靠近一個簡單的陷阱（${trap}），被上面的肉誘餌吸引。
-牠停下來觀察幾秒鐘，耳朵和眼睛在周圍掃視，鼻子輕輕嗅聞空氣和氣味。
-
-接著牠用前腳或鼻子，小幅度、慢慢地去碰近誘餌附近的區域，
-動作看起來謹慎、真實，不誇張、不做誇大反應，也不跳躍、翻滾。
-
-整支影片的鏡頭以${cam}為主，沒有誇張的運鏡或特效，
-整體調性偏${mood}，讓畫面像真實拍攝的野外觀察片段。
-    `.trim();
-  }
-
-  return `
-一段 10 秒、9:16 的寫實家庭風格影片。
-場景在${scene}，畫面呈現${detail}，感覺像日常生活中隨手拍下的片段。
-
-畫面中有一個簡單的小陷阱（${trap}），裡面或附近放著起司。
-一隻${ani.label}慢慢走近，停在陷阱附近，先用鼻子聞一聞，再用眼睛仔細看。
-
-牠偶爾用前腳或鼻子輕輕碰一下起司或陷阱邊緣，
-反應是很小的動作，例如稍微退半步、眨一下眼或把頭微微往後縮，
-整體看起來自然、不搞笑、不誇張，也不卡通化。
-
-鏡頭以${cam}為主，整體氛圍${mood}，
-就像真實生活中對動物小心探索陷阱的紀錄畫面。
-  `.trim();
-}
-
-/* ===== 初始化 & 綁定 ===== */
-
-function populate(type) {
-  animalSelect.innerHTML = "<option value=''>（隨機）</option>";
-  sceneSelect.innerHTML = "<option value=''>（隨機）</option>";
-  trapSelect.innerHTML = "<option value=''>（隨機）</option>";
-
-  (animalOptions[type] || []).forEach(a=>{
-    animalSelect.innerHTML += `<option value="${a.key}">${a.label}</option>`;
-  });
-  (sceneOptions[type] || []).forEach(s=>{
-    sceneSelect.innerHTML += `<option value="${s.value}">${s.label}</option>`;
-  });
-  (trapOptions[type] || []).forEach(t=>{
-    trapSelect.innerHTML += `<option value="${t.value}">${t.label}</option>`;
-  });
-}
-
-animalTypeGroup.addEventListener("change", ()=>{
-  const type = getType();
-  document.querySelectorAll(".radio-pill").forEach(p=>{
-    const i = p.querySelector("input");
-    p.classList.toggle("active", i.checked);
-  });
-  populate(type);
-});
-
-randomBtn.addEventListener("click", ()=>{
-  const radios = [...document.querySelectorAll("input[name='animalType']")];
-  randomFromArray(radios).checked = true;
-
-  document.querySelectorAll(".radio-pill").forEach(p=>{
-    const i = p.querySelector("input");
-    p.classList.toggle("active", i.checked);
-  });
-
-  populate(getType());
-  animalSelect.value = "";
-  sceneSelect.value = "";
-  trapSelect.value = "";
-  moodSelect.value = "";
-  cameraSelect.value = "";
-  detailSelect.value = "";
-});
-
-generateBtn.addEventListener("click", ()=>{
-  const lang = langSelect.value;
-  let out = "";
-
-  if (lang === "en") out = buildEn();
-  else if (lang === "zh") out = buildZh();
-  else out = buildEn() + "\n\n--------------------\n\n" + buildZh();
-
-  promptOutput.value = out;
-});
-
-copyBtn.addEventListener("click", async ()=>{
-  const txt = promptOutput.value.trim();
-  if (!txt) return alert("目前沒有內容，可以先產生描述。");
-  try {
-    await navigator.clipboard.writeText(txt);
-    alert("已複製內容。");
-  } catch(e){
-    alert("瀏覽器無法自動複製，請手動選取文字。");
-  }
-});
-
-/* 啟動預設：凶猛動物 */
-populate("ferocious");
-</script>
-
+      // 預設先產生一次
+      generatePrompt();
+    });
+  </script>
 </body>
 </html>
